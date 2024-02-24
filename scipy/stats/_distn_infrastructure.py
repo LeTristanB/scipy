@@ -3976,8 +3976,8 @@ class rv_sample(rv_discrete):
         return self.qvals[indx]
 
     def _ppf(self, q):
-        qq, sqq = np.broadcast_arrays(q[..., None], self.qvals)
-        indx = argmax(sqq >= qq, axis=-1)
+        # clip index because floating point precision may make a value in q bigger than the highest in qvals
+        indx = np.clip(a=np.searchsorted(self.qvals, q), a_min=0, a_max=len(self.qvals)-1)
         return self.xk[indx]
 
     def _rvs(self, size=None, random_state=None):
